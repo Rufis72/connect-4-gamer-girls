@@ -60,11 +60,11 @@ def get_piece_at(column:int,row:int):
     return board[column][row]
 pygame.init()
 screen = pygame.display.set_mode(flags = pygame.FULLSCREEN)
-board_png = pygame.image.load("Art/Board.png")
+board_png = pygame.image.load("Board.png")
 
 
-Red = pygame.image.load("Art/RedToken.png")
-Yellow = pygame.image.load("Art/YellowToken.png")
+Red = pygame.image.load("RedToken.png")
+Yellow = pygame.image.load("YellowToken.png")
 
 run = True
 FPS = 30
