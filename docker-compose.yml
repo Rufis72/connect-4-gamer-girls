@@ -1,0 +1,6 @@
+services:
+  connect4gamergirls:
+    image: connect4gamergirls
+    build:
+      context: .
+      dockerfile: ./Dockerfile
