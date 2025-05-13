@@ -83,7 +83,52 @@ class Board:
 
         Returns a tuple where the first one is always None (this is for minimax stuff), and the second is the evaluation
         If the second number is 1, it means red won, -1 means yellow won, and 0 means nobody's won yet.'''
-        return (None, 0)
+        four_in_a_row_count = 0
+        four_in_a_row_color = None
+        # going through and checking the rows for 4 in a rows
+        # going through all the rows
+        for row in range(6):
+            # then going through every piece in that row
+            for column in range(7):
+                # adding one to the four in a row count if the color is the same as the rest of the pattern
+                if self.board[column][row] == four_in_a_row_color:
+                    four_in_a_row_count += 1
+                elif self.board[column][row] != None:
+                    # since it didn't match, we reset the count.
+                    # but since there is still a piece, we set it to one
+                    # that's why we check if it's not None
+                    four_in_a_row_count = 1
+                    # then we also update the four in a row color
+                    four_in_a_row_color = self.board[column][row]
+
+                # now we check if the 4 in a row count reached 4
+                # in which case, we return a number for whichever color won
+                if four_in_a_row_count == 4:
+                    return (None, {True: 1, False: -1}.get(four_in_a_row_color))
+
+        # resetting the four in a row count and color
+        four_in_a_row_color = None
+        four_in_a_row_count = 0
+
+        # now we check the columns for 4 in a rows
+        for column in range(7):
+            # going through every piece in that column
+            for row in range(6):
+                # adding one to the four in a row count if the color is the same as the rest of the pattern
+                if self.board[column][row] == four_in_a_row_color:
+                    four_in_a_row_count += 1
+                elif self.board[column][row] != None:
+                    # since it didn't match, we reset the count.
+                    # but since there is still a piece, we set it to one
+                    # that's why we check if it's not None
+                    four_in_a_row_count = 1
+                    # then we also update the four in a row color
+                    four_in_a_row_color = self.board[column][row]
+
+                # now we check if the 4 in a row count reached 4
+                # in which case, we return a number for whichever color won
+                if four_in_a_row_count == 4:
+                    return (None, {True: 1, False: -1}.get(four_in_a_row_color))
 
     def move(self, column: int):
         '''Plays a piece in the specified column'''
