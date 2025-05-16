@@ -32,7 +32,7 @@ class Board:
         # if depth is 0, returning the evaluation of the function
         # we also check if eval isn't none, since we don't wanna keep looking if the game's already over
         eval = self.eval()
-        if depth == 0 or self[1] != None:
+        if depth == 0 or eval[1] != 0:
             return eval
 
         # since we haven't reached max depth, we find the best move
@@ -157,6 +157,9 @@ class Board:
                         and self.board[x][y] == self.board[x + 3][y - 3]
                         and self.board[x][y] != None):
                         return (None, {True: 1, False: -1}.get(self.board[x][y]))
+
+            # returning a tie since the game isn't over yet
+            return [None, 0]
 
     def move(self, column: int):
         '''Plays a piece in the specified column'''

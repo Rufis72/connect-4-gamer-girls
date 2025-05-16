@@ -1,9 +1,13 @@
 import pygame
+import time
+import engine
 import random
+a = time.time()
+time.sleep(1)
+print(time.time() - a)
 
-
-
-player = 1 #Detirmins the
+# the reason player is random, is so that the bot or player doesn't always go first
+player = random.randint(1, 2) # this is the variable for the current player who's turn it is
 def switch_player():
     """
     Switches the player from 1 to 2 or from 2 to 1.
@@ -147,14 +151,14 @@ board = [[0 for _ in range(6)] for _ in range(7)]
 
 
 
-def place_piece(column:int,piece: int):
+def place_piece(column:int, piece: int):
     """
     Places a piece in the board at the specified column.
     :param column: The column to place the piece in (0-6).
     :param piece: The piece to place (one is red two is yellow).
     """
     if column < 0 or column > 7:
-        raise ValueError("Column must be between 0 and 6.")
+        raise ValueError(f"Column must be between 0 and 6. \'{column}\' is not valid")
     if piece not in [1, 2]:
         raise ValueError("Piece must be 1 or 2.")
     row = 5
@@ -167,52 +171,106 @@ def place_piece(column:int,piece: int):
     board[column][row] = piece
     
     Tokens.add(Token(piece, row, column))
-    
 
+    # updating the bot's board
+    bot_board_class.move(column)
+
+    # updating the time since player played
+
+
+# NOTE: The algorithm will also play as player 1
+# this is all the logic for the bot
+# these are some variables
+time_player_played = time.time()
+# this specifically is the board state for the bot
+bot_board_class = engine.Board()
 
 
 while run:
-    #Draw the tokens on the board
-    
-    
-               
-    player = random.choice([1, 2])
-    
+    # keeping a stable fps
     clock.tick(FPS)
-   
-    screen.fill((255, 255, 255))
-    
+
+    # drawing everything onto the screen
     Tokens.update()
     board_screen.fill((0, 0, 0, 0))
     Tokens.draw(board_screen)
     board_screen.blit(board_png, (0, 0))
     screen.blit(pygame.transform.scale(board_screen, size), padding)
     
-    
+    # updating the display
     pygame.display.flip()
+
+    # checking if the game is over
+    if bot_board_class.eval()[1] != 0:
+        # resetting the board
+        reset_board()
+        # resetting the bot's board
+        bot_board_class = engine.Board()
+        # resetting the turn (or more accurately making it random
+        player = random.randint(1, 2)
+
+    # getting and playing the move for the bot (if it's it's turn)
+    # we also check if it's been a short bit since the player played to make the moves easier to see
+    if player == 2 and time_player_played + 0.4 < time.time():
+        place_playing = bot_board_class.minimax(5, {1: True, 2: False}.get(player))[0]
+        place_piece(place_playing, player)
+        switch_player()
     
     
     for event in pygame.event.get():
+        # quitting the game if the window was closed
         if event.type == pygame.QUIT:
             run = False
+
+        # quitting the game is esc was pressed
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 run = False
-            if event.key == pygame.K_1:
-                place_piece(0, player)
-            if event.key == pygame.K_2:
-                place_piece(1, player)
-            if event.key == pygame.K_3:
-                place_piece(2, player)  
-            if event.key == pygame.K_4:
-                place_piece(3, player)
-            if event.key == pygame.K_5:
-                place_piece(4, player)
-            if event.key == pygame.K_6:
-                place_piece(5, player)
-            if event.key == pygame.K_7:
-                place_piece(6, player)
+
+            # checking if it's the algorithm or player's turn
+            if player == 1:
+                # playing a piece (if a number key was pressed)
+                if event.key == pygame.K_1:
+                    place_piece(0, player)
+                    switch_player()
+                    time_player_played = time.time()
+
+                if event.key == pygame.K_2:
+                    place_piece(1, player)
+                    switch_player()
+                    time_player_played = time.time()
+
+                if event.key == pygame.K_3:
+                    place_piece(2, player)
+                    switch_player()
+                    time_player_played = time.time()
+
+                if event.key == pygame.K_4:
+                    place_piece(3, player)
+                    switch_player()
+                    time_player_played = time.time()
+
+                if event.key == pygame.K_5:
+                    place_piece(4, player)
+                    switch_player()
+                    time_player_played = time.time()
+
+                if event.key == pygame.K_6:
+                    place_piece(5, player)
+                    switch_player()
+                    time_player_played = time.time()
+
+                if event.key == pygame.K_7:
+                    place_piece(6, player)
+                    switch_player()
+                    time_player_played = time.time()
+
+            # resetting the board if 'r' was pressed
             if event.key == pygame.K_r:
-                
+                # resetting the board
                 reset_board()
+                # resetting the bot's board
+                bot_board_class = engine.Board()
+                # resetting the turn (or more accurately making it random
+                player = random.randint(1, 2)
 
