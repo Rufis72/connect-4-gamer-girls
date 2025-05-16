@@ -2,7 +2,7 @@ import copy
 
 class Board:
     def __init__(self):
-        self.board = [[None] * 6] * 7
+        self.board = [[None] * 6 for _ in range(7)]
         self.turn = True # true is red, false is yellow
 
     def get_possible_moves(self) -> list[int]:
@@ -30,8 +30,10 @@ class Board:
 
         Returns a tuple of A. the move made, and B. it's evaluation'''
         # if depth is 0, returning the evaluation of the function
-        if depth == 0:
-            return self.eval()
+        # we also check if eval isn't none, since we don't wanna keep looking if the game's already over
+        eval = self.eval()
+        if depth == 0 or self[1] != None:
+            return eval
 
         # since we haven't reached max depth, we find the best move
         # we do this by calling minimax on all the possible moves from the current board state
@@ -83,11 +85,12 @@ class Board:
 
         Returns a tuple where the first one is always None (this is for minimax stuff), and the second is the evaluation
         If the second number is 1, it means red won, -1 means yellow won, and 0 means nobody's won yet.'''
-        four_in_a_row_count = 0
-        four_in_a_row_color = None
         # going through and checking the rows for 4 in a rows
         # going through all the rows
         for row in range(6):
+            # resetting the four in a row count and color
+            four_in_a_row_color = 'place holder'
+            four_in_a_row_count = 0
             # then going through every piece in that row
             for column in range(7):
                 # adding one to the four in a row count if the color is the same as the rest of the pattern
@@ -107,11 +110,13 @@ class Board:
                     return (None, {True: 1, False: -1}.get(four_in_a_row_color))
 
         # resetting the four in a row count and color
-        four_in_a_row_color = None
+        four_in_a_row_color = 'place holder'
         four_in_a_row_count = 0
-
         # now we check the columns for 4 in a rows
         for column in range(7):
+            # resetting the four in a row count and color
+            four_in_a_row_color = 'place holder'
+            four_in_a_row_count = 0
             # going through every piece in that column
             for row in range(6):
                 # adding one to the four in a row count if the color is the same as the rest of the pattern
@@ -130,6 +135,29 @@ class Board:
                 if four_in_a_row_count == 4:
                     return (None, {True: 1, False: -1}.get(four_in_a_row_color))
 
+        # now we check the diagonal
+        # checking the diagonals going bottom left to top right
+        # the reason we don't go to 7 and 6 is because otherwise the diagonal we'd be checking would go off the board
+        for x in range(3):
+            for y in range(2):
+                # this is just checking if everything in the diagonal is the same
+                if (self.board[x][y] == self.board[x + 1][y + 1]
+                    and self.board[x][y] == self.board[x + 2][y + 2]
+                    and self.board[x][y] == self.board[x + 3][y + 3]
+                    and self.board[x][y] != None):
+                    return (None, {True: 1, False: -1}.get(self.board[x][y]))
+
+            # checking the diagonals going top left to bottom right
+            # the reason we don't go to 7 and 6 is because otherwise the diagonal we'd be checking would go off the board
+            for x in range(3):
+                for y in range(5, 2, -1):
+                    # this is just checking if everything in the diagonal is the same
+                    if (self.board[x][y] == self.board[x + 1][y - 1]
+                        and self.board[x][y] == self.board[x + 2][y - 2]
+                        and self.board[x][y] == self.board[x + 3][y - 3]
+                        and self.board[x][y] != None):
+                        return (None, {True: 1, False: -1}.get(self.board[x][y]))
+
     def move(self, column: int):
         '''Plays a piece in the specified column'''
         # checking until we find an empty spot
@@ -142,4 +170,3 @@ class Board:
                 self.turn = not self.turn
                 # ending the loop
                 return None
-print(Board().minimax(2, False))
