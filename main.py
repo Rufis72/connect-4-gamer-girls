@@ -213,7 +213,7 @@ while run:
     # getting and playing the move for the bot (if it's it's turn)
     # we also check if it's been a short bit since the player played to make the moves easier to see
     # we have the eval stuff here so that it doesn't come before checking if the games over (which would cause a crash)
-    if player == 2 and time_player_played + 0.4 < time.time() and bot_board_class.eval()[1] != 0:
+    if player == 2 and time_player_played + 0.4 < time.time() and bot_board_class.eval()[1] == 0:
         place_playing = bot_board_class.minimax(5, {1: True, 2: False}.get(player))[0]
         place_piece(place_playing, player)
         switch_player()
